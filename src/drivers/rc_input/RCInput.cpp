@@ -306,13 +306,7 @@ void RCInput::Run()
 			updateParams();
 		}
 
-		if (_vehicle_status_sub.updated()) {
-			vehicle_status_s vehicle_status;
-
-			if (_vehicle_status_sub.copy(&vehicle_status)) {
-				_armed = (vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED);
-			}
-		}
+		_vehicle_status_arming_state_sub.update();
 
 		const hrt_abstime cycle_timestamp = hrt_absolute_time();
 
@@ -327,7 +321,7 @@ void RCInput::Run()
 				uint8_t cmd_ret = vehicle_command_s::VEHICLE_CMD_RESULT_UNSUPPORTED;
 #if defined(SPEKTRUM_POWER)
 
-				if (!_rc_scan_locked && !_armed) {
+				if (!_rc_scan_locked && !(_vehicle_status_arming_state_sub.get() == vehicle_status_s::ARMING_STATE_ARMED)) {
 					if ((int)vcmd.param1 == 0) {
 						// DSM binding command
 						int dsm_bind_mode = (int)vcmd.param2;
@@ -730,7 +724,8 @@ void RCInput::Run()
 
 			_to_input_rc.publish(_rc_in);
 
-		} else if (!rc_updated && !_armed && (hrt_elapsed_time(&_rc_in.timestamp_last_signal) > 1_s)) {
+		} else if (!rc_updated && !(_vehicle_status_arming_state_sub.get() == vehicle_status_s::ARMING_STATE_ARMED)
+			   && (hrt_elapsed_time(&_rc_in.timestamp_last_signal) > 1_s)) {
 			_rc_scan_locked = false;
 		}
 

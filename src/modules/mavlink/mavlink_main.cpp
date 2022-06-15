@@ -1250,7 +1250,7 @@ Mavlink::send_protocol_version()
 int
 Mavlink::configure_stream(const char *stream_name, const float rate)
 {
-	PX4_DEBUG("configure_stream(%s, %.3f)", stream_name, (double)rate);
+    PX4_DEBUG("configure_stream(%s, %.3f)", stream_name, (double)rate);
 
 	/* calculate interval in us, -1 means unlimited stream, 0 means disabled */
 	int interval = 0;
@@ -1610,6 +1610,7 @@ Mavlink::configure_streams_to_default(const char *configure_single_stream)
 		configure_stream_local("RC_CHANNELS", 5.0f);
 		configure_stream_local("SERVO_OUTPUT_RAW_0", 1.0f);
 		configure_stream_local("SYS_STATUS", 1.0f);
+        //configure_stream_local("TRAJECTORY_REPRESENTATION_WAYPOINTS", 5.0f);
 		configure_stream_local("UTM_GLOBAL_POSITION", 0.5f);
 		configure_stream_local("VFR_HUD", 4.0f);
 		configure_stream_local("VIBRATION", 0.1f);
@@ -1783,6 +1784,7 @@ Mavlink::configure_streams_to_default(const char *configure_single_stream)
 		configure_stream_local("SERVO_OUTPUT_RAW_1", 20.0f);
 		configure_stream_local("SYS_STATUS", 1.0f);
 		configure_stream_local("SYSTEM_TIME", 1.0f);
+        //configure_stream_local("TRAJECTORY_REPRESENTATION_WAYPOINTS", 5.0f);
 		configure_stream_local("UTM_GLOBAL_POSITION", 1.0f);
 		configure_stream_local("VFR_HUD", 20.0f);
 		configure_stream_local("VIBRATION", 2.5f);

@@ -398,10 +398,10 @@ private:
 	// update subscriptions
 	void		params_update();
 
-	/**
-	 * Publish a new position setpoint triplet for position controllers
-	 */
-	void		publish_position_setpoint_triplet();
+    /**
+     * Publish a new position setpoint triplet for position controllers
+     */
+    void		publish_position_setpoint_triplet();
 
 	/**
 	 * Publish the mission result so commander and mavlink know what is going on

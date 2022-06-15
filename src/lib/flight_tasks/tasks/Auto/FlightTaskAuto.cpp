@@ -197,7 +197,7 @@ bool FlightTaskAuto::_evaluateTriplets()
 	const bool prev_next_validity_changed = (_prev_was_valid != _sub_triplet_setpoint.get().previous.valid)
 						|| (_next_was_valid != _sub_triplet_setpoint.get().next.valid);
 
-	if (PX4_ISFINITE(_triplet_target(0))
+    if (PX4_ISFINITE(_triplet_target(0))
 	    && PX4_ISFINITE(_triplet_target(1))
 	    && PX4_ISFINITE(_triplet_target(2))
 	    && fabsf(_triplet_target(0) - tmp_target(0)) < 0.001f
@@ -304,6 +304,7 @@ bool FlightTaskAuto::_evaluateTriplets()
 
 	if (_param_com_obs_avoid.get()
 	    && _sub_vehicle_status.get().vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
+        _target_acceptance_radius = _sub_triplet_setpoint.get().current.acceptance_radius;
 		_obstacle_avoidance.updateAvoidanceDesiredWaypoints(_triplet_target, _yaw_setpoint, _yawspeed_setpoint,
 				_triplet_next_wp,
 				_sub_triplet_setpoint.get().next.yaw,
@@ -323,7 +324,7 @@ void FlightTaskAuto::_set_heading_from_mode()
 	switch (_param_mpc_yaw_mode.get()) {
 
 	case 0: // Heading points towards the current waypoint.
-	case 4: // Same as 0 but yaw fisrt and then go
+    case 4: // Same as 0 but yaw first and then go
 		v = Vector2f(_target) - Vector2f(_position);
 		break;
 
@@ -453,7 +454,13 @@ State FlightTaskAuto::_getCurrentState()
 
 	} else if (u_prev_to_target * prev_to_pos < 0.0f && prev_to_pos.length() > _mc_cruise_speed) {
 		// Current position is more than cruise speed in front of previous setpoint.
-		return_state = State::previous_infront;
+        if (_param_com_obs_avoid.get()
+                && _sub_vehicle_status.get().vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
+            return_state = State::none;
+        }
+        else {
+            return_state = State::previous_infront;
+        }
 
 	} else if (Vector2f(Vector2f(_position) - _closest_pt).length() > _mc_cruise_speed) {
 		// Vehicle is more than cruise speed off track.

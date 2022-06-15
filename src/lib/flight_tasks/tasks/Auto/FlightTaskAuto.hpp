@@ -73,7 +73,7 @@ enum class WaypointType : int {
 enum class State {
 	offtrack, /**< Vehicle is more than cruise speed away from track */
 	target_behind, /**< Vehicle is in front of target. */
-	previous_infront, /**< Vehilce is behind previous waypoint.*/
+    previous_infront, /**< Vehicle is behind previous waypoint.*/
 	none /**< Vehicle is in normal tracking mode from triplet previous to triplet target */
 };
 
@@ -157,4 +157,5 @@ private:
 	bool _evaluateGlobalReference(); /**< Check is global reference is available. */
 	State _getCurrentState(); /**< Computes the current vehicle state based on the vehicle position and navigator triplets. */
 	void _set_heading_from_mode(); /**< @see  MPC_YAW_MODE */
+
 };

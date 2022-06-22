@@ -248,6 +248,7 @@ private:
 		(ParamInt<px4::params::CBRK_FLIGHTTERM>) _param_cbrk_flightterm,
 		(ParamInt<px4::params::CBRK_VELPOSERR>) _param_cbrk_velposerr,
 		(ParamInt<px4::params::CBRK_VTOLARMING>) _param_cbrk_vtolarming,
+        (ParamInt<px4::params::CBRK_ONBCONNECT>) _param_cbrk_onboardconnection,
 
 		// Geofrence
 		(ParamInt<px4::params::GF_ACTION>) _param_geofence_action,
@@ -318,7 +319,7 @@ private:
 	hrt_abstime	_datalink_last_heartbeat_gcs{0};
 	hrt_abstime	_datalink_last_heartbeat_avoidance_system{0};
 	hrt_abstime	_datalink_last_heartbeat_onboard_controller{0};
-	bool		_onboard_controller_lost{false};
+    bool		_onboard_controller_lost{true};
 	bool		_avoidance_system_lost{false};
 	bool		_avoidance_system_status_change{false};
 	uint8_t		_datalink_last_status_avoidance_system{telemetry_heartbeat_s::STATE_UNINIT};

@@ -2542,6 +2542,8 @@ Commander::get_circuit_breaker_params()
 			CBRK_VELPOSERR_KEY);
 	status_flags.circuit_breaker_vtol_fw_arming_check = circuit_breaker_enabled_by_val(_param_cbrk_vtolarming.get(),
 			CBRK_VTOLARMING_KEY);
+    status_flags.circuit_breaker_onboard_connection_check = circuit_breaker_enabled_by_val(_param_cbrk_onboardconnection.get(),
+            CBRK_ONBCONNECT_KEY);
 }
 
 void
@@ -3803,6 +3805,7 @@ void Commander::data_link_check()
 							mavlink_log_info(&mavlink_log_pub, "Onboard controller regained");
 							_onboard_controller_lost = false;
 							_status_changed = true;
+                            status_flags.condition_onboard_link_valid = true;
 						}
 					}
 
@@ -3844,25 +3847,35 @@ void Commander::data_link_check()
 		}
 	}
 
-	// ONBOARD CONTROLLER data link loss failsafe (hard coded 5 seconds)
+    // ONBOARD CONTROLLER data link loss failsafe (hard coded 1 second)
 	if ((_datalink_last_heartbeat_onboard_controller > 0)
-	    && (hrt_elapsed_time(&_datalink_last_heartbeat_onboard_controller) > 5_s)
+        && (hrt_elapsed_time(&_datalink_last_heartbeat_onboard_controller) > 1_s)
 	    && !_onboard_controller_lost) {
 
 		mavlink_log_critical(&mavlink_log_pub, "Connection to mission computer lost");
 		_onboard_controller_lost = true;
 		_status_changed = true;
+        status_flags.condition_onboard_link_valid = false;
 	}
 
-	// AVOIDANCE SYSTEM state check (only if it is enabled)
+   if (status_flags.avoidance_system_required &&
+      !circuit_breaker_enabled_by_val(_param_cbrk_onboardconnection.get(), CBRK_ONBCONNECT_KEY) &&
+      _onboard_controller_lost && status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION) {
+      // Put system in hold mode
+      send_vehicle_command(vehicle_command_s::VEHICLE_CMD_DO_SET_MODE, (float)1, (float)PX4_CUSTOM_MAIN_MODE_AUTO,
+                         (float)PX4_CUSTOM_SUB_MODE_AUTO_LOITER);
+    }
+
+  // AVOIDANCE SYSTEM state check (only if it is enabled)
 	if (status_flags.avoidance_system_required && !_onboard_controller_lost) {
 
 		//if heartbeats stop
 		if (!_avoidance_system_lost && (_datalink_last_heartbeat_avoidance_system > 0)
-		    && (hrt_elapsed_time(&_datalink_last_heartbeat_avoidance_system) > 5_s)) {
+            && (hrt_elapsed_time(&_datalink_last_heartbeat_avoidance_system) > 1_s)) {
 
 			_avoidance_system_lost = true;
 			status_flags.avoidance_system_valid = false;
+            mavlink_log_critical(&mavlink_log_pub, "Avoidance System Lost");
 		}
 
 		//if status changed

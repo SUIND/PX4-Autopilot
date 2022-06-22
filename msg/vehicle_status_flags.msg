@@ -15,6 +15,7 @@ bool condition_local_altitude_valid
 bool condition_power_input_valid                # set if input power is valid
 bool condition_battery_healthy                # set if battery is available and not low
 bool condition_escs_error		      # set to true if one or more ESCs reporting esc_status are offline
+bool condition_onboard_link_valid             # set if connection to onboard computer is good
 bool circuit_breaker_engaged_power_check
 bool circuit_breaker_engaged_airspd_check
 bool circuit_breaker_engaged_enginefailure_check
@@ -22,6 +23,7 @@ bool circuit_breaker_flight_termination_disabled
 bool circuit_breaker_engaged_usb_check
 bool circuit_breaker_engaged_posfailure_check	# set to true when the position valid checks have been disabled
 bool circuit_breaker_vtol_fw_arming_check 	# set to true if for VTOLs arming in fixed-wing mode should be allowed
+bool circuit_breaker_onboard_connection_check   # set to true if arming should be allowed without connection to companion computer
 
 bool offboard_control_signal_found_once
 bool offboard_control_signal_lost

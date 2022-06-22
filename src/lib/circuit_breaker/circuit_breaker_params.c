@@ -193,3 +193,18 @@ PARAM_DEFINE_INT32(CBRK_VELPOSERR, 0);
  * @group Circuit Breaker
  */
 PARAM_DEFINE_INT32(CBRK_VTOLARMING, 0);
+
+/**
+ * Circuit breaker for onboard computer connection check
+ *
+ * Setting this parameter to 158040 will enable arming without connection to companion computer
+ * mode for VTOLs.
+ * WARNING: ENABLING THIS CIRCUIT BREAKER IS AT OWN RISK
+ *
+ * @reboot_required true
+ * @min 0
+ * @max 158040
+ * @category Developer
+ * @group Circuit Breaker
+ */
+PARAM_DEFINE_INT32(CBRK_ONBCONNECT, 0);

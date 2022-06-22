@@ -50,6 +50,14 @@ bool PreFlightCheck::preArmCheck(orb_advert_t *mavlink_log_pub, const vehicle_st
 		prearm_ok = false;
 	}
 
+    // onboard controller connected
+
+    if(!status_flags.circuit_breaker_onboard_connection_check && !status_flags.condition_onboard_link_valid)
+    {
+        if (report_fail) { mavlink_log_critical(mavlink_log_pub, "Arming denied! Onboard controller not valid"); }
+        prearm_ok = false;
+    }
+
 	// battery and system power status
 	if (!status_flags.circuit_breaker_engaged_power_check) {
 

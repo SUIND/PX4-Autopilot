@@ -51,6 +51,8 @@
 #include <math.h>
 #include <poll.h>
 
+#include <uORB/topics/mavlink_log.h>
+
 #ifdef CONFIG_NET
 #include <net/if.h>
 #include <arpa/inet.h>
@@ -72,6 +74,9 @@
 #endif
 
 using matrix::wrap_2pi;
+
+/* Mavlink log uORB handle */
+static orb_advert_t mavlink_log_pub = nullptr;
 
 MavlinkReceiver::~MavlinkReceiver()
 {
@@ -2780,6 +2785,9 @@ void MavlinkReceiver::handle_message_statustext(mavlink_message_t *msg)
 			 "[mavlink: component %d] %." STRINGIFY(MAVLINK_MSG_STATUSTEXT_FIELD_TEXT_LEN) "s", msg->compid, statustext.text);
 
 		_log_message_pub.publish(log_message);
+
+
+        mavlink_log_info(&mavlink_log_pub, "%s",statustext.text);
 	}
 }
 
